@@ -9,3 +9,11 @@
         d6  e6  f6  g6
 ```
 
+```
+P Plain
+S Sea
+M Mountain
+R Reef
+W sWamp
+```
+
