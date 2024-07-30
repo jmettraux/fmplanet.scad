@@ -10,10 +10,20 @@
 ```
 
 ```
-P Plain
-S Sea
-M Mountain
-R Reef
-W sWamp
+- P Plain
+_ S Sea
+^ M Mountain
+. R Reef
+o W sWamp
+```
+
+```
+    - - - -
+   ^ ^ - _ _
+  ^ ^ - o o .
+ _ o o - _ . .
+  _ - - _ _ .
+   _ - ^ _ _
+    _ _ _ _
 ```
 
