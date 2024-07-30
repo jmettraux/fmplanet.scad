@@ -146,9 +146,7 @@ class Tile
 
   def fill_all(opts)
 
-    t = opts[:type] || :plain
-
-    @hexes.values.each { |h| h.type = t }
+    @hexes.values.each { |h| h.type = Array(opts[:type] || :plain).sample }
   end
 
   def fill_snakes(opts)
@@ -177,7 +175,7 @@ class Tile
 
     untyped_hexes.each do |h|
 
-      h.type = opts[:default] || :plain
+      h.type = Array(opts[:default] || :plain).sample
     end
   end
 
@@ -222,6 +220,9 @@ puts t.to_s
 t.fill(:all, type: :plain)
 puts t.to_s
 
-t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: :reef)
+t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: [ :reef, :swamp ])
+puts t.to_s
+
+t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
 puts t.to_s
 
