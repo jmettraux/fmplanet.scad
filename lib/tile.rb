@@ -121,6 +121,20 @@ class Tile
     "
   end
 
+  def fill(strategy_name, opts={})
+
+    send("fill_#{strategy_name}", opts)
+  end
+
+  protected
+
+  def fill_all(opts)
+
+    t = opts[:type] || :plain
+
+    @hexes.values.each { |h| h.type = t }
+  end
+
   class << self
 
     def parse(s)
@@ -157,5 +171,8 @@ t = Tile.parse(%{
 })
 
 pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
+puts t.to_s
+
+t.fill(:all, type: :plain)
 puts t.to_s
 
