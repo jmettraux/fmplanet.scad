@@ -1,0 +1,15 @@
+
+*.swp
+.vimrc
+.viminfo
+.vimgrep
+.vimspec
+.vimmarks
+
+.ruby-version
+
+.todo.md
+
+.chat.md
+.openai.*
+
