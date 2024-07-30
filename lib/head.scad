@@ -2,6 +2,14 @@
 //
 // head.scad
 
+// Copyright (C) 2024 John Mettraux jmettraux@gmail.com
+//
+// This work is licensed under the
+// Creative Commons Attribution 4.0 International License.
+//
+// https://creativecommons.org/licenses/by/4.0/
+
+
 h = 5; // height unit, 5mm
 br = 1.7; // magnet ball radius
 o2 = 0.2; // some kind of step

@@ -2,6 +2,12 @@
 #
 # tile.rb
 
+# Copyright (C) 2024 John Mettraux jmettraux@gmail.com
+#
+# This work is licensed under the
+# Creative Commons Attribution 4.0 International License.
+#
+# https://creativecommons.org/licenses/by/4.0/
 
 
 class String
@@ -51,6 +57,11 @@ class Hex
   def untyped_neighbours
 
     neighbours.select { |h| h.type == nil }
+  end
+
+  def edge?
+
+    neighbours.size < 6
   end
 
   class << self
