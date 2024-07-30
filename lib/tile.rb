@@ -48,6 +48,11 @@ class Hex
     surroundings.compact
   end
 
+  def untyped_neighbours
+
+    neighbours.select { |h| h.type == nil }
+  end
+
   class << self
 
     def to_k(x, y=nil)
@@ -68,11 +73,17 @@ class Tile
   KEYS =
     %w{
           a0  b0  c0  d0
+
         a1  b1  c1  d1  e1
+
       a2  b2  c2  d2  e2  f2
+
     a3  b3  c3  d3  e3  f3  g3
+
       b4  c4  d4  e4  f4  g4
+
         c5  d5  e5  f5  g5
+
           d6  e6  f6  g6
     }
 
@@ -80,9 +91,9 @@ class Tile
     '-' => :plain,
     '_' => :sea,
     '^' => :mountain,
-    '.' => :reef,
+    ':' => :reef,
     'o' => :swamp}
-      .inject({}) { |h, (k, v)| h[k] = v; h[v] = k; h }
+      .inject({}) { |h, (k, v)| h[k] = v; h[v] = k; h[v.to_s] = k; h }
 
   attr_reader :hexes
 
@@ -108,7 +119,7 @@ class Tile
 
   def to_s
 
-    t = lambda { |k| TYPES[@hexes[Hex.to_k(k)].type] }
+    t = lambda { |k| TYPES[@hexes[Hex.to_k(k)].type] || '?' }
 
     "
      #{t[:a0]} #{t[:b0]} #{t[:c0]} #{t[:d0]}
@@ -119,6 +130,11 @@ class Tile
     #{t[:c5]} #{t[:d5]} #{t[:e5]} #{t[:f5]} #{t[:g5]}
      #{t[:d6]} #{t[:e6]} #{t[:f6]} #{t[:g6]}
     "
+  end
+
+  def unfill
+
+    @hexes.values.each { |h| h.type = nil }
   end
 
   def fill(strategy_name, opts={})
@@ -133,6 +149,36 @@ class Tile
     t = opts[:type] || :plain
 
     @hexes.values.each { |h| h.type = t }
+  end
+
+  def fill_snakes(opts)
+
+    unfill
+
+    heads = []
+
+    opts.each { |k, v|
+      next unless TYPES[v]
+      h = self[k]; next unless h
+      heads << h
+      h.type = v }
+
+    while heads.any?
+
+      h = heads.sample
+      heads.delete(h)
+      h1 = h.untyped_neighbours.sample
+
+      next if h1.nil?
+
+      h1.type = h.type
+      heads << h1
+    end
+
+    untyped_hexes.each do |h|
+
+      h.type = opts[:default] || :plain
+    end
   end
 
   class << self
@@ -163,16 +209,19 @@ t = Tile.new
 t = Tile.parse(%{
     - - - -
    ^ ^ - _ _
-  ^ ^ - o o .
- _ o o - _ . .
-  _ - - _ _ .
+  ^ ^ - o o :
+ _ o o - _ : :
+  _ - - _ _ :
    _ - ^ _ _
     _ _ _ _
 })
 
-pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
+#pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
 puts t.to_s
 
 t.fill(:all, type: :plain)
+puts t.to_s
+
+t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: :reef)
 puts t.to_s
 
