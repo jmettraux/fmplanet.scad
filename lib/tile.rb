@@ -162,6 +162,12 @@ class Tile
 
   def fill_snakes(opts)
 
+    mutations =
+      opts.select { |k, _| TYPES[k] }
+    mutations =
+      TYPES.inject({}) { |h, (k, v)| h[k] = [ k ] if k.is_a?(Symbol); h } \
+        if mutations.empty?
+
     unfill
 
     heads = []
@@ -180,7 +186,7 @@ class Tile
 
       next if h1.nil?
 
-      h1.type = h.type
+      h1.type = mutations[h.type].sample
       heads << h1
     end
 
@@ -235,5 +241,16 @@ t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: [ :reef, :swamp ])
 puts t.to_s
 
 t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
+puts t.to_s
+
+t.fill(
+  :snakes,
+  a0: :sea, f4: :plain, d6: :mountain,
+  sea: [ :sea, :sea, :reef ],
+  reef: [ :reef, :reef, :sea, :sea, :swamp ],
+  swamp: [ :swamp, :swamp, :plain, :mountain ],
+  plain: [ :plain, :plain, :swamp, :mountain ],
+  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
+  default: [ :reef, :swamp ])
 puts t.to_s
 
