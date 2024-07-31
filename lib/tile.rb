@@ -13,9 +13,10 @@
 class String
 
   MINUSES = {
-    'b' => 'a', 'c' => 'b', 'd' => 'c', 'e' => 'd', 'f' => 'd', 'g' => 'f' }
+    'b' => 'a', 'c' => 'b', 'd' => 'c', 'e' => 'd', 'f' => 'g' }
   PLUSES = MINUSES
     .inject({}) { |h, (k, v)| h[v] = k; h }
+p PLUSES
 
   def -(i); MINUSES[self]; end
   def +(i); PLUSES[self]; end
@@ -180,20 +181,23 @@ class Tile
 
     while heads.any?
 
+puts to_s
       h = heads.sample
       heads.delete(h)
       h1 = h.untyped_neighbours.sample
 
+p "#{h.key} -> #{h1 && h1.key}"
+p [ h.key,  h.untyped_neighbours ] unless h1
+p [ h.key,  h.surroundings.compact.collect(&:key) ] unless h1
       next if h1.nil?
 
       h1.type = mutations[h.type].sample
       heads << h1
     end
 
-    untyped_hexes.each do |h|
-
-      h.type = Array(opts[:default] || :plain).sample
-    end
+    #untyped_hexes.each do |h|
+    #  h.type = Array(opts[:default] || :plain).sample
+    #end
   end
 
   class << self
@@ -232,25 +236,38 @@ t = Tile.parse(%{
 })
 
 #pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
-puts t.to_s
+#puts t.to_s
 
-t.fill(:all, type: :plain)
-puts t.to_s
+#t.fill(:all, type: :plain)
+#puts t.to_s
 
 t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: [ :reef, :swamp ])
 puts t.to_s
 
-t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
-puts t.to_s
+#t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
+#puts t.to_s
+#
+#t.fill(
+#  :snakes,
+#  a0: :sea, f4: :plain, #d6: :mountain,
+#  sea: [ :sea, :sea, :reef ],
+#  reef: [ :reef, :reef, :sea, :sea, :swamp ],
+#  swamp: [ :swamp, :swamp, :plain, :mountain ],
+#  plain: [ :plain, :plain, :swamp, :mountain ],
+#  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
+#  default: [ :reef, :swamp ])
+#puts t.to_s
 
-t.fill(
-  :snakes,
-  a0: :sea, f4: :plain, d6: :mountain,
-  sea: [ :sea, :sea, :reef ],
-  reef: [ :reef, :reef, :sea, :sea, :swamp ],
-  swamp: [ :swamp, :swamp, :plain, :mountain ],
-  plain: [ :plain, :plain, :swamp, :mountain ],
-  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
-  default: [ :reef, :swamp ])
-puts t.to_s
+#        a1  b1  c1  d1  e1
+#
+#      a2  b2  c2  d2  e2  f2
+#
+#    a3  b3  c3  d3  e3  f3  g3
+h = t[:g3]
+p h.key
+p h.neighbours.collect(&:key).sort
+%i[ nw ne e se sw w ].each do |k|
+  h1 = h.send(k)
+  puts "#{k} -> #{h1 && h1.key}"
+end
 
