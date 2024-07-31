@@ -55,12 +55,14 @@ class Tile
     s << to_s
     s << "\n*/\n\n"
 
+    s << "translate([ -3 * dx + 3 * dx2, 3 * dy, 0 ]) {"
+
     hexes.each do |k, h|
       s << h.to_scad << "\n"
 #break if k == 'd0'
     end
 
-    s << "\n"
+    s << "\n}\n"
 
     s.string
   end
