@@ -37,14 +37,17 @@ class Hex
       y == 0 || y == 6 || x == :a || x == :g ||
       key == :b4 || key == :c5 ||
       key == :e1 || key == :f2
+    suff =
+      type == :sea ? '' :
+      "_#{(0..5).to_a.sample}"
 
     s << "/* #{key} */  "
     s << "translate(#{translate}) { "
-    s << "#{type}_hex(\"#{key}\", #{e}); "
+    s << "#{type}_hex#{suff}(\"#{key}\", #{e}); "
 
-    if type == :swamp
-      s << "swamp_cover_#{(0..(tile.swamp_cover_count - 1)).to_a.sample}(); "
-    end
+    #if type == :swamp
+    #  s << "swamp_cover_#{(0..(tile.swamp_cover_count - 1)).to_a.sample}(); "
+    #end
 
     s << "}"
 
@@ -65,8 +68,10 @@ class Tile
 
     s << "\n/*" << to_s.rstrip << "\n*/\n\n"
 
-    s << swamp_cover_scad
-    s << "\n"
+    s << reef_scad << "\n"
+    s << swamp_scad << "\n"
+    s << plain_scad << "\n"
+    s << mountain_scad << "\n"
 
     s << "translate([ -3 * dx + 3 * dx2, 3 * dy, 0 ]) {\n\n"
 
@@ -81,14 +86,39 @@ class Tile
 
   #protected
 
-  def swamp_cover_scad
+  def reef_scad
     s = StringIO.new
-    swamp_cover_count.times.each do |i|
-      s << "module swamp_cover_#{i}() {}\n"
+    6.times.each do |i|
+      s << "module reef_hex_#{i}(key, edge) { "
+      s << "sea_hex(key, edge); "
+      s << "}\n"
     end
     s.string
   end
-  def swamp_cover_count; 5; end
+
+  def plain_scad
+    s = StringIO.new
+    6.times.each do |i|
+      s << "module plain_hex_#{i}(key, edge) {}\n"
+    end
+    s.string
+  end
+
+  def swamp_scad
+    s = StringIO.new
+    6.times.each do |i|
+      s << "module swamp_hex_#{i}(key, edge) {}\n"
+    end
+    s.string
+  end
+
+  def mountain_scad
+    s = StringIO.new
+    6.times.each do |i|
+      s << "module mountain_hex_#{i}(key, edge) {}\n"
+    end
+    s.string
+  end
 end
 
 
