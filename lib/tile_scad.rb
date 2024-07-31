@@ -31,13 +31,24 @@ class Hex
 
   def to_scad
 
+    s = StringIO.new
+
     e =
       y == 0 || y == 6 || x == :a || x == :g ||
       key == :b4 || key == :c5 ||
       key == :e1 || key == :f2
 
-    #"/* #{key} */ " +
-    "  /* #{key} */  translate(#{translate}) { #{type}_hex(\"#{key}\", #{e}); }"
+    s << "/* #{key} */  "
+    s << "translate(#{translate}) { "
+    s << "#{type}_hex(\"#{key}\", #{e}); "
+
+    if type == :swamp
+      s << "swamp_cover_#{(0..(tile.swamp_cover_count - 1)).to_a.sample}(); "
+    end
+
+    s << "}"
+
+    s.string
   end
 end
 
@@ -53,17 +64,30 @@ class Tile
     s << "\n"
     s << "/*" << to_s.rstrip << "\n*/\n\n"
 
+    s << swamp_cover_scad
+    s << "\n"
+
     s << "translate([ -3 * dx + 3 * dx2, 3 * dy, 0 ]) {\n\n"
 
     hexes.each do |k, h|
-      s << h.to_scad << "\n"
-#break if k == 'd0'
+      s << '  ' << h.to_scad << "\n"
     end
 
     s << "}\n"
 
     s.string
   end
+
+  #protected
+
+  def swamp_cover_scad
+    s = StringIO.new
+    swamp_cover_count.times.each do |i|
+      s << "module swamp_cover_#{i}() {}\n"
+    end
+    s.string
+  end
+  def swamp_cover_count; 5; end
 end
 
 
