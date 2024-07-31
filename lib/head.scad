@@ -17,12 +17,12 @@ o2 = 0.2; // some kind of step
 r = 20 / 2;
 t = r / cos(30);
 rr = r / 10;
-echo("r", r, "t", t);
+//echo("r", r, "t", t);
 
 module sphe() { sphere(r=rr, $fn=12); }
 module balcyl() { cylinder(r=br + 2 * o2, h=br * 2 + o2, center=true, $fn=36); }
 
-module hex(edge=false) {
+module hex(key, edge=false) {
 
   difference() {
 
@@ -39,20 +39,26 @@ module hex(edge=false) {
       #rotate([ 0, 0, a ]) translate([ 0, r - br - 4 * o2, 0 ]) balcyl();
     }
   }
+
+  // TODO write key when debug
 }
 
 //hex(true);
 //translate([ 2 * r, 0, 0 ]) hex(true);
 
-module sea_hex(edge) {
-  hex(edge);
+module sea_hex(key, edge) {
+  hex(key, edge);
 }
-module reef_hex(edge) {
+module reef_hex(key, edge) {
+  hex(key, edge);
 }
-module plain_hex(edge) {
+module plain_hex(key, edge) {
+  hex(key, edge);
 }
-module swamp_hex(edge) {
+module swamp_hex(key, edge) {
+  hex(key, edge);
 }
-module mountain_hex(edge) {
+module mountain_hex(key, edge) {
+  hex(key, edge);
 }
 
