@@ -37,7 +37,7 @@ class Hex
       key == :e1 || key == :f2
 
     #"/* #{key} */ " +
-    "translate(#{translate}) #{type}_hex(\"#{key}\", #{e});"
+    "  /* #{key} */  translate(#{translate}) { #{type}_hex(\"#{key}\", #{e}); }"
   end
 end
 
@@ -51,18 +51,16 @@ class Tile
     s << File.read('lib/head.scad')
     s << "\n\n// " << "-" * 78
     s << "\n"
-    s << "/*\n"
-    s << to_s
-    s << "\n*/\n\n"
+    s << "/*" << to_s.rstrip << "\n*/\n\n"
 
-    s << "translate([ -3 * dx + 3 * dx2, 3 * dy, 0 ]) {"
+    s << "translate([ -3 * dx + 3 * dx2, 3 * dy, 0 ]) {\n\n"
 
     hexes.each do |k, h|
       s << h.to_scad << "\n"
 #break if k == 'd0'
     end
 
-    s << "\n}\n"
+    s << "}\n"
 
     s.string
   end
