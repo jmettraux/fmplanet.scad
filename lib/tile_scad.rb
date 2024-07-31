@@ -31,7 +31,10 @@ class Hex
 
   def to_scad
 
-    e = (y == 0) || (y == 6) || (x == :a) || (x == :g)
+    e =
+      y == 0 || y == 6 || x == :a || x == :g ||
+      key == :b4 || key == :c5 ||
+      key == :e1 || key == :f2
 
     #"/* #{key} */ " +
     "translate(#{translate}) #{type}_hex(\"#{key}\", #{e});"
