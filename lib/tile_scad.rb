@@ -23,8 +23,8 @@ class Hex
 
     ix = IXS.index(x)
 
-    tx = "#{ix} * r - #{y} * r2"
-    ty = "#{y} * r"
+    tx = "#{ix} * dx - #{y} * dx2"
+    ty = "-#{y} * dy"
 
     "[ #{tx}, #{ty}, 0 ]"
   end

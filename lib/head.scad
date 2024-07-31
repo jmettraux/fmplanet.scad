@@ -17,7 +17,7 @@ o2 = 0.2; // some kind of step
 r = 20 / 2;
 t = r / cos(30);
 rr = r / 10;
-//echo("r", r, "t", t);
+echo("r", r, "t", t);
 
 module sphe() { sphere(r=rr, $fn=12); }
 module balcyl() { cylinder(r=br + 2 * o2, h=br * 2 + o2, center=true, $fn=36); }
@@ -61,4 +61,8 @@ module swamp_hex(key, edge) {
 module mountain_hex(key, edge) {
   hex(key, edge);
 }
+
+dx = r * 2;
+dy = 1.5 * t + o2;
+dx2 = dx / 2;
 
