@@ -58,9 +58,11 @@ $tile = Tile.new
 puts
 test("Symbol#+", y: :f, o: :g) { |os| os[:y] + 1 }
 puts
-test("Hex#e", k: :a0, o: 'b0') { |os| $tile[os[:k]].e.key }
-test("Hex#e", k: :f3, o: 'g3') { |os| $tile[os[:k]].e.key }
+test("Hex#e", k: :a0, o: :b0) { |os| $tile[os[:k]].e.key }
+test("Hex#e", k: :f3, o: :g3) { |os| $tile[os[:k]].e.key }
 test("Hex#e", k: :g3, o: nil) { |os| $tile[os[:k]].e }
+test("Hex#w", k: :a0, o: nil) { |os| $tile[os[:k]].w }
+test("Hex#w", k: :f3, o: :e3) { |os| $tile[os[:k]].w.key }
 puts
 
 summarize

@@ -28,7 +28,7 @@ class Hex
   def initialize(tile, key, type=nil)
 
     @tile = tile
-    @key = key
+    @key = key.to_sym
     @type = type
   end
 
@@ -226,47 +226,56 @@ class Tile
   end
 end
 
-t = Tile.new
-#p t['a0'].key
-#p t[:a1].key
-#p t.typed_hexes
-#p t.untyped_hexes
+if $0 == __FILE__
 
-#h = t[:b3]
-#p h.key
-#p h.nw.key
-#p h.sw.key
+  t = Tile.new
+  #p t['a0'].key
+  #p t[:a1].key
+  #p t.typed_hexes
+  #p t.untyped_hexes
 
-t = Tile.parse(%{
-    - - - -
-   ^ ^ - _ _
-  ^ ^ - o o :
- _ o o - _ : :
-  _ - - _ _ :
-   _ - ^ _ _
-    _ _ _ _
-})
+  #h = t[:b3]
+  #p h.key
+  #p h.nw.key
+  #p h.sw.key
 
-#pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
-#puts t.to_s
+  t = Tile.parse(%{
+      - - - -
+     ^ ^ - _ _
+    ^ ^ - o o :
+   _ o o - _ : :
+    _ - - _ _ :
+     _ - ^ _ _
+      _ _ _ _
+  })
 
-t.fill(:all, type: :plain)
-puts t.to_s
+  #pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
+  #puts t.to_s
 
-t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: [ :reef, :swamp ])
-puts t.to_s
+  t.fill(:all, type: :plain)
+  puts t.to_s
 
-t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
-puts t.to_s
+  t.fill(
+    :snakes,
+    a0: :sea, f4: :plain, d6: :mountain,
+    default: [ :reef, :swamp ])
+  puts t.to_s
 
-t.fill(
-  :snakes,
-  a0: :sea, f4: :plain, #d6: :mountain,
-  sea: [ :sea, :sea, :reef ],
-  reef: [ :reef, :reef, :sea, :sea, :swamp ],
-  swamp: [ :swamp, :swamp, :plain, :mountain ],
-  plain: [ :plain, :plain, :swamp, :mountain ],
-  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
-  default: [ :reef, :swamp ])
-puts t.to_s
+  t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
+  puts t.to_s
+
+  t.fill(:all, type: [ :plain ] * 4 + [ :reef, :sea, :swamp ])
+  puts t.to_s
+
+  t.fill(
+    :snakes,
+    a0: :sea, f4: :plain, d6: :plain,
+    sea: [ :sea, :sea, :reef ],
+    reef: [ :reef, :reef, :sea, :sea, :swamp ],
+    swamp: [ :swamp, :swamp, :plain, :mountain ],
+    plain: [ :plain, :plain, :plain, :swamp, :mountain ],
+    mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
+    default: [ :reef, :swamp ])
+  puts t.to_s
+end
 
