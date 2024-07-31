@@ -40,7 +40,7 @@ module hex(key, edge=false) {
     }
   }
 
-  // TODO write key when debug
+  //#translate([ 0, 0, h * 2 ]) linear_extrude(0.4) text(key, size=8);
 }
 
 //hex(true);
