@@ -10,13 +10,10 @@
 # https://creativecommons.org/licenses/by/4.0/
 
 
-class String
+class Symbol
 
-  MINUSES = {
-    'b' => 'a', 'c' => 'b', 'd' => 'c', 'e' => 'd', 'f' => 'g' }
-  PLUSES = MINUSES
-    .inject({}) { |h, (k, v)| h[v] = k; h }
-p PLUSES
+  PLUSES = { a: :b, b: :c, c: :d, d: :e, e: :f, f: :g }
+  MINUSES = { g: :f, f: :e, e: :d, d: :c, c: :b, b: :a }
 
   def -(i); MINUSES[self]; end
   def +(i); PLUSES[self]; end
@@ -37,6 +34,20 @@ class Hex
 
   def x; Hex.to_xy(@key)[0]; end
   def y; Hex.to_xy(@key)[1]; end
+
+#       a0  b0  c0  d0
+#
+#     a1  b1  c1  d1  e1
+#
+#   a2  b2  c2  d2  e2  f2
+#
+# a3  b3  c3  d3  e3  f3  g3
+#
+#   b4  c4  d4  e4  f4  g4
+#
+#     c5  d5  e5  f5  g5
+#
+#       d6  e6  f6  g6
 
   def nw; @tile[x - 1, y - 1]; end
   def ne; @tile[x, y - 1]; end
@@ -74,7 +85,7 @@ class Hex
 
     def to_xy(k)
 
-      [ k[0, 1], k[1, 1].to_i ]
+      [ k[0, 1].to_sym, k[1, 1].to_i ]
     end
   end
 end
@@ -181,23 +192,24 @@ class Tile
 
     while heads.any?
 
-puts to_s
+#puts to_s
       h = heads.sample
       heads.delete(h)
       h1 = h.untyped_neighbours.sample
 
-p "#{h.key} -> #{h1 && h1.key}"
-p [ h.key,  h.untyped_neighbours ] unless h1
-p [ h.key,  h.surroundings.compact.collect(&:key) ] unless h1
+#p "#{h.key} -> #{h1 && h1.key}"
+#p [ h.key,  h.untyped_neighbours ] unless h1
+#p [ h.key,  h.surroundings.compact.collect(&:key) ] unless h1
       next if h1.nil?
 
       h1.type = mutations[h.type].sample
       heads << h1
     end
 
-    #untyped_hexes.each do |h|
-    #  h.type = Array(opts[:default] || :plain).sample
-    #end
+    untyped_hexes.each do |h|
+
+      h.type = Array(opts[:default] || :plain).sample
+    end
   end
 
   class << self
@@ -238,36 +250,23 @@ t = Tile.parse(%{
 #pp t.hexes.inject({}) { |h, (k, v)| h[k] = v.type; h }
 #puts t.to_s
 
-#t.fill(:all, type: :plain)
-#puts t.to_s
+t.fill(:all, type: :plain)
+puts t.to_s
 
 t.fill(:snakes, a0: :sea, f4: :plain, d6: :mountain, default: [ :reef, :swamp ])
 puts t.to_s
 
-#t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
-#puts t.to_s
-#
-#t.fill(
-#  :snakes,
-#  a0: :sea, f4: :plain, #d6: :mountain,
-#  sea: [ :sea, :sea, :reef ],
-#  reef: [ :reef, :reef, :sea, :sea, :swamp ],
-#  swamp: [ :swamp, :swamp, :plain, :mountain ],
-#  plain: [ :plain, :plain, :swamp, :mountain ],
-#  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
-#  default: [ :reef, :swamp ])
-#puts t.to_s
+t.fill(:all, type: [ :plain, :plain, :plain, :reef, :sea, :sea, :swamp ])
+puts t.to_s
 
-#        a1  b1  c1  d1  e1
-#
-#      a2  b2  c2  d2  e2  f2
-#
-#    a3  b3  c3  d3  e3  f3  g3
-h = t[:g3]
-p h.key
-p h.neighbours.collect(&:key).sort
-%i[ nw ne e se sw w ].each do |k|
-  h1 = h.send(k)
-  puts "#{k} -> #{h1 && h1.key}"
-end
+t.fill(
+  :snakes,
+  a0: :sea, f4: :plain, #d6: :mountain,
+  sea: [ :sea, :sea, :reef ],
+  reef: [ :reef, :reef, :sea, :sea, :swamp ],
+  swamp: [ :swamp, :swamp, :plain, :mountain ],
+  plain: [ :plain, :plain, :swamp, :mountain ],
+  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
+  default: [ :reef, :swamp ])
+puts t.to_s
 

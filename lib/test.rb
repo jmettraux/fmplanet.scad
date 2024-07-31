@@ -2,10 +2,16 @@
 #
 # test.rb
 
+$test_count = 0
+$fail_count = 0
+$err_count = 0
+
 def red(s); "\e[31m#{s}\e[0m"; end
 def green(s); "\e[32m#{s}\e[0m"; end
 
 def test(message, opts, &block)
+
+  $test_count += 1
 
   print("#{message} #{opts.inspect} ")
 
@@ -16,11 +22,19 @@ def test(message, opts, &block)
     puts green('OK')
   else
     print red('NG'); puts " #{r.inspect} != #{o.inspect}"
+    $fail_count += 1
   end
 
 rescue => err
   print red('ERR'); puts " #{err.to_s}"
   err.backtrace.each { |t| puts "  #{t}" }
+  $err_count += 1
+end
+
+def summarize
+
+  puts "#{$test_count} tests, #{$err_count} errors, #{$fail_count} failures"
+  puts
 end
 
 $: << '.'
@@ -42,9 +56,12 @@ $tile = Tile.new
 #       d6  e6  f6  g6
 
 puts
+test("Symbol#+", y: :f, o: :g) { |os| os[:y] + 1 }
+puts
 test("Hex#e", k: :a0, o: 'b0') { |os| $tile[os[:k]].e.key }
-test("Hex#e", k: :f3, o: :g3) { |os| $tile[os[:k]].e.key }
+test("Hex#e", k: :f3, o: 'g3') { |os| $tile[os[:k]].e.key }
 test("Hex#e", k: :g3, o: nil) { |os| $tile[os[:k]].e }
 puts
 
+summarize
 
