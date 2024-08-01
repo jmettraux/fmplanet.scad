@@ -90,7 +90,8 @@ class Tile
     s = StringIO.new
     6.times.each do |i|
       s << "module reef_hex_#{i}(key, edge) { "
-      s << "sea_hex(key, edge); "
+      s <<   "sea_hex(key, edge); "
+      s <<   "blob([ [ 1, 2, 3 ], [ 4, 5, 6 ] ], o2); "
       s << "}\n"
     end
     s.string

@@ -52,24 +52,23 @@ module hex2(dz) {
       cylinder(r=t - 2 * o2, h = 2 * o2, $fn=6);
 }
 
+module blob(xyrs, dz) {
+  intersection() {
+    #hex2(dz);
+    translate([ 0, 0, h * 0.5 + dz ]) {
+      for (i = [ 0 : len(xyrs) - 1 ]) {
+        a = xyrs[i];
+        b = xyrs[i + 1];
+        echo("i", a);
+        echo("i+1", b);
+      }
+    }
+  }
+}
+
 module sea_hex(key, edge) {
   hex(key, edge);
   color("blue") hex2(-o2);
-}
-module reef_hex(key, edge) {
-  sea_hex(key, edge);
-}
-module plain_hex(key, edge) {
-  sea_hex(key, edge);
-  color("brown") hex2(1 * o2);
-}
-module swamp_hex(key, edge) {
-  sea_hex(key, edge);
-}
-module mountain_hex(key, edge) {
-  sea_hex(key, edge);
-  color("brown") hex2(1 * o2);
-  color("grey") hex2(2 * o2);
 }
 
 dx = r * 2;
