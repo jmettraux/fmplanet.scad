@@ -9,10 +9,37 @@
 #
 # https://creativecommons.org/licenses/by/4.0/
 
+SCAD = File.read('lib/head.scad')
+R = Kernel.eval(SCAD.match(/^r = ([^;]+);/)[1])
+D = R.to_f * 2.0
+D2 = D / 2.0
+D4 = D / 4.0
+
 require 'stringio'
 
 $: << '.'
 require 'lib/tile'
+
+
+class Range
+
+  def sample; to_a.sample; end
+end
+
+class Array
+
+  def to_scad
+    s = StringIO.new
+    s << "[ "
+    s << collect { |e|
+      case e
+      when Float then "%.3f" % e
+      when Array then e.to_scad
+      else e.inspect; end }.join(', ')
+    s << " ]"
+    s.string
+  end
+end
 
 
 class Hex
@@ -39,15 +66,11 @@ class Hex
       key == :e1 || key == :f2
     suff =
       type == :sea ? '' :
-      "_#{(0..5).to_a.sample}"
+      "_#{(0..5).sample}"
 
     s << "/* #{key} */  "
     s << "translate(#{translate}) { "
     s << "#{type}_hex#{suff}(\"#{key}\", #{e}); "
-
-    #if type == :swamp
-    #  s << "swamp_cover_#{(0..(tile.swamp_cover_count - 1)).to_a.sample}(); "
-    #end
 
     s << "}"
 
@@ -62,7 +85,7 @@ class Tile
     s = StringIO.new
 
     s << "\n\n// .scad\n"
-    s << File.read('lib/head.scad')
+    s << SCAD
     s << "\n" << "/" * 80
     s << "\n"
 
@@ -84,14 +107,34 @@ class Tile
     s.string
   end
 
-  #protected
+  protected
+
+  def rnd_xyr
+    [ -D2 + rand * D, -D2 + rand * D, rand * D4 ]
+  end
+
+  def next_xyr(xyr0)
+    [ xyr0[0] + - D4 + rand * D2, xyr0[1] - D4 + rand * D2, rand * D4 ]
+  end
+
+  def xyr_chain(len)
+    a = [ rnd_xyr ]
+    while a.length < len
+      a << next_xyr(a.last)
+    end
+    a
+  end
 
   def reef_scad
+    bcount = (3..7).sample
     s = StringIO.new
     6.times.each do |i|
       s << "module reef_hex_#{i}(key, edge) { "
-      s <<   "sea_hex(key, edge); "
-      s <<   "blob([ [ 1, 2, 3 ], [ 4, 5, 6 ] ], o2); "
+      s << "  sea_hex(key, edge);\n"
+      bcount.times do |bi|
+        ps = xyr_chain((2 + rand * 3).to_i)
+        s << "  blob(#{ps.to_scad}, o2 + o2 * 0.5);\n"
+      end
       s << "}\n"
     end
     s.string

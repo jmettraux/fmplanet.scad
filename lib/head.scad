@@ -54,13 +54,16 @@ module hex2(dz) {
 
 module blob(xyrs, dz) {
   intersection() {
-    #hex2(dz);
+    hex2(dz);
     translate([ 0, 0, h * 0.5 + dz ]) {
       for (i = [ 0 : len(xyrs) - 1 ]) {
         a = xyrs[i];
         b = xyrs[i + 1];
-        echo("i", a);
-        echo("i+1", b);
+//echo("i", a, "i+1", b);
+        hull() {
+          translate([ a.x, a.y, 0 ]) cylinder(h=o2, r=a.z, center=true, $fn=12);
+          if (b) translate([ b.x, b.y, 0 ]) cylinder(h=o2, r=b.z, center=true, $fn=12);
+        }
       }
     }
   }
