@@ -46,23 +46,25 @@ module hex(key, edge=false) {
 //hex(true);
 //translate([ 2 * r, 0, 0 ]) hex(true);
 
-module hex2(dz) {
+module hex2(hh, dz) {
   translate([ 0, 0, h * 0.5 + dz ])
     rotate([ 0, 0, 30 ])
-      cylinder(r=t - 2 * o2, h = 2 * o2, $fn=6);
+      cylinder(r=t - 2 * o2, h=hh, $fn=6);
 }
 
-module blob(xyrs, dz) {
+module blob(xyrs, bh, dz) {
   intersection() {
-    hex2(dz);
+    hex2(bh, dz);
     translate([ 0, 0, h * 0.5 + dz ]) {
       for (i = [ 0 : len(xyrs) - 1 ]) {
         a = xyrs[i];
         b = xyrs[i + 1];
 //echo("i", a, "i+1", b);
         hull() {
-          translate([ a.x, a.y, 0 ]) cylinder(h=o2, r=a.z, center=true, $fn=12);
-          if (b) translate([ b.x, b.y, 0 ]) cylinder(h=o2, r=b.z, center=true, $fn=12);
+          translate([ a.x, a.y, 0 ])
+            cylinder(h=bh, r=a.z, center=true, $fn=12);
+          if (b) translate([ b.x, b.y, 0 ])
+            cylinder(h=bh, r=b.z, center=true, $fn=12);
         }
       }
     }
@@ -71,7 +73,7 @@ module blob(xyrs, dz) {
 
 module sea_hex(key, edge) {
   hex(key, edge);
-  color("blue") hex2(-o2);
+  color("blue") hex2(2 * o2, -o2);
 }
 
 dx = r * 2;

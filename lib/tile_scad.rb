@@ -133,7 +133,7 @@ class Tile
       s << "  sea_hex(key, edge);\n"
       bcount.times do |bi|
         ps = xyr_chain((2 + rand * 3).to_i)
-        s << "  blob(#{ps.to_scad}, o2 + o2 * 0.5);\n"
+        s << "  blob(#{ps.to_scad}, o2 * 2, o2 + o2 * 0.5);\n"
       end
       s << "}\n"
     end
