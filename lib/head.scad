@@ -51,10 +51,14 @@ module hex2(hh, dz) {
     rotate([ 0, 0, 30 ])
       cylinder(r=t - 2 * o2, h=hh, $fn=6);
 }
+module cyl2(ch, dz) {
+  translate([ 0, 0, h * 0.5 + dz ])
+    cylinder(r=r - 5 * o2, h=ch, $fn=24);
+}
 
-module blob(xyrs, bh, dz) {
+module blob(xyrs, bh, dz, shape="hex") {
   intersection() {
-    hex2(bh, dz);
+    /*color("red")*/ if (shape == "hex") hex2(bh, dz); else cyl2(bh, dz);
     translate([ 0, 0, h * 0.5 + dz ]) {
       for (i = [ 0 : len(xyrs) - 1 ]) {
         a = xyrs[i];

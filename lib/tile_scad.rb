@@ -10,6 +10,7 @@
 # https://creativecommons.org/licenses/by/4.0/
 
 SCAD = File.read('lib/head.scad')
+VARIANT_COUNT = 12
 R = Kernel.eval(SCAD.match(/^r = ([^;]+);/)[1])
 D = R.to_f * 2.0
 D2 = D / 2.0
@@ -66,7 +67,7 @@ class Hex
       key == :e1 || key == :f2
     suff =
       type == :sea ? '' :
-      "_#{(0..5).sample}"
+      "_#{(0..(VARIANT_COUNT - 1)).sample}"
 
     s << "/* #{key} */  "
     s << "translate(#{translate}) { "
@@ -110,11 +111,13 @@ class Tile
   protected
 
   def rnd_xyr
-    [ -D2 + rand * D, -D2 + rand * D, rand * D4 ]
+    [ -D2 + rand * D, -D2 + rand * D,
+      rand * D4 * 0.6 ]
   end
 
   def next_xyr(xyr0)
-    [ xyr0[0] + - D4 + rand * D2, xyr0[1] - D4 + rand * D2, rand * D4 ]
+    [ xyr0[0] + - D4 + rand * D2, xyr0[1] - D4 + rand * D2,
+    rand * D4 * 0.6 ]
   end
 
   def xyr_chain(len)
@@ -126,14 +129,13 @@ class Tile
   end
 
   def reef_scad
-    bcount = (3..7).sample
     s = StringIO.new
-    6.times.each do |i|
+    VARIANT_COUNT.times.each do |i|
       s << "module reef_hex_#{i}(key, edge) { "
       s << "  sea_hex(key, edge);\n"
-      bcount.times do |bi|
-        ps = xyr_chain((2 + rand * 3).to_i)
-        s << "  blob(#{ps.to_scad}, o2 * 2, o2 + o2 * 0.5);\n"
+      (4..9).sample.times do |bi|
+        ps = xyr_chain((1 + rand * 3).to_i)
+        s << "  blob(#{ps.to_scad}, o2 * 2, o2 + o2 * 0.5, \"circle\");\n"
       end
       s << "}\n"
     end
@@ -142,7 +144,7 @@ class Tile
 
   def plain_scad
     s = StringIO.new
-    6.times.each do |i|
+    VARIANT_COUNT.times.each do |i|
       s << "module plain_hex_#{i}(key, edge) {}\n"
     end
     s.string
@@ -150,7 +152,7 @@ class Tile
 
   def swamp_scad
     s = StringIO.new
-    6.times.each do |i|
+    VARIANT_COUNT.times.each do |i|
       s << "module swamp_hex_#{i}(key, edge) {}\n"
     end
     s.string
@@ -158,7 +160,7 @@ class Tile
 
   def mountain_scad
     s = StringIO.new
-    6.times.each do |i|
+    VARIANT_COUNT.times.each do |i|
       s << "module mountain_hex_#{i}(key, edge) {}\n"
     end
     s.string
@@ -179,6 +181,8 @@ if $0 == __FILE__
     plain: [ :plain, :plain, :plain, :swamp, :mountain ],
     mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
     default: [ :reef, :swamp ])
+  #t.fill(:all, type: :sea)
+
   puts t.to_s
 
   File.open('out.scad', 'wb') { |f| f.write(t.to_scad) }
