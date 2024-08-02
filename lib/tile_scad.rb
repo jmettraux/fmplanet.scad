@@ -122,12 +122,16 @@ class Tile
 
   def rnd_xyr
     [ -D2 + rand * D, -D2 + rand * D,
-      rand * D4 * 0.6 ]
+      rnd_r ]
   end
 
   def next_xyr(xyr0)
     [ xyr0[0] + - D4 + rand * D2, xyr0[1] - D4 + rand * D2,
-    rand * D4 * 0.6 ]
+      rnd_r ]
+  end
+
+  def xyr_set(len)
+    len.times.collect { rnd_xyr }
   end
 
   def xyr_chain(len)
@@ -141,7 +145,7 @@ class Tile
   def reef_scad
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
-      s << "module reef_hex_#{i}(key, edge) { "
+      s << "module reef_hex_#{i}(key, edge) {\n"
       s << "  sea_hex(key, edge);\n"
       (4..9).sample.times do |bi|
         ps = xyr_chain((1 + rand * 3).to_i)
@@ -156,7 +160,7 @@ class Tile
   def plain_scad
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
-      s << "module plain_hex_#{i}(key, edge) { "
+      s << "module plain_hex_#{i}(key, edge) {\n"
       s << "  plain_hex(key, edge);\n"
       (4..9).sample.times do |bi|
         ps = xyr_chain((1 + rand * 3).to_i)
@@ -171,10 +175,13 @@ class Tile
   def swamp_scad
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
-      s << "module swamp_hex_#{i}(key, edge) { "
-      s << "difference() { "
-      s << "plain_hex(key, edge); "
-      s << "holes(); "
+      s << "module swamp_hex_#{i}(key, edge) {\n"
+      s << "  sea_hex(key, edge);\n"
+      s << "  difference() {\n"
+      s << "    plain_hex(key, edge);\n"
+      ps = xyr_set((5..9).sample)
+      s << "    translate([ 0, 0, 0.5 * h + 2 * o2 ])\n"
+      s << "      holes(#{ps.to_scad}, 4.1 * o2); "
       s << "}\n"
       s << "}\n"
     end
@@ -184,7 +191,15 @@ class Tile
   def mountain_scad
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
-      s << "module mountain_hex_#{i}(key, edge) {}\n"
+      s << "module mountain_hex_#{i}(key, edge) {\n"
+      s << "  plain_hex(key, edge);\n"
+      s << "  color(\"grey\") translate([ 0, 0, 2 * o2]) plain_hex(key, edge);\n"
+      (4..9).sample.times do |bi|
+        ps = xyr_chain((1 + rand * 3).to_i)
+        s << "  translate([ 0, 0, 0.5 * h + 7 * o2 ])"
+        s << " color(\"grey\") blobs(#{ps.to_scad}, o2 * 2, \"hex\");\n"
+      end
+      s << "}\n"
     end
     s.string
   end

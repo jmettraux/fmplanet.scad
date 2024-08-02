@@ -72,8 +72,11 @@ module blobs(xyrs, bh, shape="hex") {
   }
 }
 
-module holes() {
-  // TODO
+module holes(xyrs, bh) {
+  for (xyr = xyrs) {
+    translate([ xyr.x, xyr.y, - 0.5 * bh ])
+      cylinder(h=bh * 2, r=xyr.z, center=true, $fn=12);
+  }
 }
 
 module sea_hex(key, edge) {
