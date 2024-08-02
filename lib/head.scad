@@ -52,31 +52,32 @@ module int_hex(hh) {
       cylinder(r=t - 2 * o2, h=2 * hh, $fn=6);
 }
 module int_cyl(ch) {
-  translate([ 0, 0, -hh ])
+  translate([ 0, 0, -ch ])
     cylinder(r=r - 5 * o2, h=2 * ch, $fn=24);
 }
 
 module blob(xyrs, bh, shape="hex") {
-  intersection() {
-    #if (shape == "hex") int_hex(bh); else int_cyl(bh);
-    //translate([ 0, 0, h * 0.5 + dz ]) {
-    for (i = [ 0 : len(xyrs) - 1 ]) {
-      a = xyrs[i];
-      b = xyrs[i + 1];
-      hull() {
-        translate([ a.x, a.y, 0 ])
-          cylinder(h=bh, r=a.z, center=true, $fn=12);
-        if (b) translate([ b.x, b.y, 0 ])
-          cylinder(h=bh, r=b.z, center=true, $fn=12);
+  translate([ 0, 0, bh / 2 ])
+    intersection() {
+      if (shape == "hex") int_hex(bh); else int_cyl(bh);
+      for (i = [ 0 : len(xyrs) - 1 ]) {
+        a = xyrs[i];
+        b = xyrs[i + 1];
+        hull() {
+          translate([ a.x, a.y, 0 ])
+            cylinder(h=bh, r=a.z, center=true, $fn=12);
+          if (b) translate([ b.x, b.y, 0 ])
+            cylinder(h=bh, r=b.z, center=true, $fn=12);
+        }
       }
     }
-    //}
-  }
 }
 
 module sea_hex(key, edge) {
   hex(key, edge);
-  color("blue") hex2(2 * o2, -o2);
+  translate([ 0, 0, h / 2 - 2 * o2 ])
+    color("blue")
+      int_hex(2 * o2);
 }
 
 dx = r * 2;

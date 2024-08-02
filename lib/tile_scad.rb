@@ -140,7 +140,8 @@ class Tile
       s << "  sea_hex(key, edge);\n"
       (4..9).sample.times do |bi|
         ps = xyr_chain((1 + rand * 3).to_i)
-        s << "  blob(#{ps.to_scad}, o2 * 2, o2 + o2 * 0.5, \"circle\");\n"
+        s << "  translate([ 0, 0, 0.5 * h + o2 * 2 ])"
+        s << " blob(#{ps.to_scad}, o2 * 2, \"circle\");\n"
       end
       s << "}\n"
     end
