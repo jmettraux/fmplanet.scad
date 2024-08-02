@@ -212,7 +212,7 @@ if $0 == __FILE__
 
   t.fill(
     :snakes,
-    a0: :sea, f4: :plain, d6: :plain,
+    f4: :plain, d6: :plain,
     sea: [ :sea, :sea, :reef ],
     reef: [ :reef, :reef, :sea, :sea, :swamp ],
     swamp: [ :swamp, :swamp, :plain, :mountain ],
