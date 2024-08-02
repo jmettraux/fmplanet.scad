@@ -95,8 +95,6 @@ class Tile
     s << "\n" << "/" * 80
     s << "\n"
 
-    s << "\n/*" << to_s.rstrip << "\n*/\n\n"
-
     s << reef_scad << "\n"
     s << swamp_scad << "\n"
     s << plain_scad << "\n"
@@ -110,10 +108,17 @@ class Tile
 
     s << "}\n"
 
+    s << "\n/*" << to_s.rstrip << "\n*/\n\n"
+
     s.string
   end
 
   protected
+
+  def rnd_r
+    r = rand * D4 * 0.6
+    r > 0.2 ? r : rnd_r
+  end
 
   def rnd_xyr
     [ -D2 + rand * D, -D2 + rand * D,
@@ -140,8 +145,8 @@ class Tile
       s << "  sea_hex(key, edge);\n"
       (4..9).sample.times do |bi|
         ps = xyr_chain((1 + rand * 3).to_i)
-        s << "  translate([ 0, 0, 0.5 * h + 3.0 * o2 ])"
-        s << " blob(#{ps.to_scad}, o2 * 2, \"circle\");\n"
+        s << "  translate([ 0, 0, 0.5 * h + 3 * o2 ])"
+        s << " blobs(#{ps.to_scad}, o2 * 2, \"circle\");\n"
       end
       s << "}\n"
     end
@@ -151,7 +156,14 @@ class Tile
   def plain_scad
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
-      s << "module plain_hex_#{i}(key, edge) {}\n"
+      s << "module plain_hex_#{i}(key, edge) { "
+      s << "  plain_hex(key, edge);\n"
+      (4..9).sample.times do |bi|
+        ps = xyr_chain((1 + rand * 3).to_i)
+        s << "  translate([ 0, 0, 0.5 * h + 5 * o2 ])"
+        s << " blobs(#{ps.to_scad}, o2 * 2, \"hex\");\n"
+      end
+      s << "}\n"
     end
     s.string
   end
@@ -159,7 +171,12 @@ class Tile
   def swamp_scad
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
-      s << "module swamp_hex_#{i}(key, edge) {}\n"
+      s << "module swamp_hex_#{i}(key, edge) { "
+      s << "difference() { "
+      s << "plain_hex(key, edge); "
+      s << "holes(); "
+      s << "}\n"
+      s << "}\n"
     end
     s.string
   end

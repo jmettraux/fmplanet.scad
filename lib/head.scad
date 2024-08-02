@@ -56,7 +56,7 @@ module int_cyl(ch) {
     cylinder(r=r - 5 * o2, h=2 * ch, $fn=24);
 }
 
-module blob(xyrs, bh, shape="hex") {
+module blobs(xyrs, bh, shape="hex") {
   intersection() {
     if (shape == "hex") int_hex(bh); else int_cyl(bh);
     for (i = [ 0 : len(xyrs) - 1 ]) {
@@ -72,9 +72,18 @@ module blob(xyrs, bh, shape="hex") {
   }
 }
 
+module holes() {
+  // TODO
+}
+
 module sea_hex(key, edge) {
   hex(key, edge);
   translate([ 0, 0, h / 2 ]) color("blue") int_hex(2 * o2);
+}
+module plain_hex(key, edge) {
+  hex(key, edge);
+  translate([ 0, 0, 0.5 * h ]) color("blue") int_hex(2 * o2);
+  translate([ 0, 0, 0.5 * h + 2 * o2 ]) int_hex(2 * o2);
 }
 
 dx = r * 2;
@@ -97,5 +106,5 @@ dx2 = dx / 2;
 
 // --- TEST ---
 
-blob([ [ 0, 0, r * 0.4 ] ], 1.0, "hex");
+blobs([ [ 0, 0, r * 0.4 ] ], 1.0, "hex");
 
