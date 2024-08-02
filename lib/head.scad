@@ -57,27 +57,24 @@ module int_cyl(ch) {
 }
 
 module blob(xyrs, bh, shape="hex") {
-  translate([ 0, 0, bh / 2 ])
-    intersection() {
-      if (shape == "hex") int_hex(bh); else int_cyl(bh);
-      for (i = [ 0 : len(xyrs) - 1 ]) {
-        a = xyrs[i];
-        b = xyrs[i + 1];
-        hull() {
-          translate([ a.x, a.y, 0 ])
-            cylinder(h=bh, r=a.z, center=true, $fn=12);
-          if (b) translate([ b.x, b.y, 0 ])
-            cylinder(h=bh, r=b.z, center=true, $fn=12);
-        }
+  intersection() {
+    if (shape == "hex") int_hex(bh); else int_cyl(bh);
+    for (i = [ 0 : len(xyrs) - 1 ]) {
+      a = xyrs[i];
+      b = xyrs[i + 1];
+      hull() {
+        translate([ a.x, a.y, 0 ])
+          cylinder(h=bh, r=a.z, center=true, $fn=12);
+        if (b) translate([ b.x, b.y, 0 ])
+          cylinder(h=bh, r=b.z, center=true, $fn=12);
       }
     }
+  }
 }
 
 module sea_hex(key, edge) {
   hex(key, edge);
-  translate([ 0, 0, h / 2 - 2 * o2 ])
-    color("blue")
-      int_hex(2 * o2);
+  translate([ 0, 0, h / 2 ]) color("blue") int_hex(2 * o2);
 }
 
 dx = r * 2;
