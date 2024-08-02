@@ -46,32 +46,31 @@ module hex(key, edge=false) {
 //hex(true);
 //translate([ 2 * r, 0, 0 ]) hex(true);
 
-module hex2(hh, dz) {
-  translate([ 0, 0, h * 0.5 + dz ])
+module int_hex(hh) {
+  translate([ 0, 0, -hh ])
     rotate([ 0, 0, 30 ])
-      cylinder(r=t - 2 * o2, h=hh, $fn=6);
+      cylinder(r=t - 2 * o2, h=2 * hh, $fn=6);
 }
-module cyl2(ch, dz) {
-  translate([ 0, 0, h * 0.5 + dz ])
-    cylinder(r=r - 5 * o2, h=ch, $fn=24);
+module int_cyl(ch) {
+  translate([ 0, 0, -hh ])
+    cylinder(r=r - 5 * o2, h=2 * ch, $fn=24);
 }
 
-module blob(xyrs, bh, dz, shape="hex") {
+module blob(xyrs, bh, shape="hex") {
   intersection() {
-    /*color("red")*/ if (shape == "hex") hex2(bh, dz); else cyl2(bh, dz);
-    translate([ 0, 0, h * 0.5 + dz ]) {
-      for (i = [ 0 : len(xyrs) - 1 ]) {
-        a = xyrs[i];
-        b = xyrs[i + 1];
-//echo("i", a, "i+1", b);
-        hull() {
-          translate([ a.x, a.y, 0 ])
-            cylinder(h=bh, r=a.z, center=true, $fn=12);
-          if (b) translate([ b.x, b.y, 0 ])
-            cylinder(h=bh, r=b.z, center=true, $fn=12);
-        }
+    #if (shape == "hex") int_hex(bh); else int_cyl(bh);
+    //translate([ 0, 0, h * 0.5 + dz ]) {
+    for (i = [ 0 : len(xyrs) - 1 ]) {
+      a = xyrs[i];
+      b = xyrs[i + 1];
+      hull() {
+        translate([ a.x, a.y, 0 ])
+          cylinder(h=bh, r=a.z, center=true, $fn=12);
+        if (b) translate([ b.x, b.y, 0 ])
+          cylinder(h=bh, r=b.z, center=true, $fn=12);
       }
     }
+    //}
   }
 }
 
@@ -97,4 +96,8 @@ dx2 = dx / 2;
 //      c5  d5  e5  f5  g5
 //
 //        d6  e6  f6  g6
+
+// --- TEST ---
+
+blob([ [ 0, 0, r * 0.4 ] ], 1.0, "hex");
 

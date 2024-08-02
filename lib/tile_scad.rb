@@ -9,7 +9,12 @@
 #
 # https://creativecommons.org/licenses/by/4.0/
 
-SCAD = File.read('lib/head.scad')
+
+SCAD = File
+  .readlines('lib/head.scad')
+  .take_while { |l| ! l.match(/^\/\/ -+ TEST /) }
+  .join('')
+
 VARIANT_COUNT = 12
 R = Kernel.eval(SCAD.match(/^r = ([^;]+);/)[1])
 D = R.to_f * 2.0
