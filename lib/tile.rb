@@ -155,6 +155,14 @@ class Tile
     "
   end
 
+  def parse(s)
+
+    ts = s.strip.split(/\s+/).collect { |t| TYPES[t] }
+    hexes.values.each_with_index { |h, i| h.type = ts[i] }
+
+    self
+  end
+
   def unfill
 
     @hexes.values.each { |h| h.type = nil }
@@ -216,12 +224,7 @@ class Tile
 
     def parse(s)
 
-      t = Tile.new
-
-      ts = s.strip.split(/\s+/).collect { |t| TYPES[t] }
-      t.hexes.values.each_with_index { |h, i| h.type = ts[i] }
-
-      t
+      Tile.new.parse(s)
     end
   end
 end
