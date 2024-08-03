@@ -15,7 +15,7 @@ SCAD = File
   .take_while { |l| ! l.match(/^\/\/ -+ TEST /) }
   .join('')
 
-VARIANT_COUNT = 12
+VARIANT_COUNT = 21
 R = Kernel.eval(SCAD.match(/^r = ([^;]+);/)[1])
 D = R.to_f * 2.0
 D2 = D / 2.0
@@ -93,7 +93,7 @@ class Tile
     s << "\n\n// .scad\n"
     s << SCAD
     s << "\n" << "/" * 80
-    s << "\n"
+    s << "\n\n"
 
     s << reef_scad << "\n"
     s << swamp_scad << "\n"
@@ -192,12 +192,11 @@ class Tile
     s = StringIO.new
     VARIANT_COUNT.times.each do |i|
       s << "module mountain_hex_#{i}(key, edge) {\n"
-      s << "  plain_hex(key, edge);\n"
-      s << "  color(\"grey\") translate([ 0, 0, 2 * o2]) plain_hex(key, edge);\n"
+      s << "  mountain_hex(key, edge);\n"
       (4..9).sample.times do |bi|
         ps = xyr_chain((1 + rand * 3).to_i)
-        s << "  translate([ 0, 0, 0.5 * h + 7 * o2 ])"
-        s << " color(\"grey\") blobs(#{ps.to_scad}, o2 * 2, \"hex\");\n"
+        s << "  translate([ 0, 0, 1.0 * h + 1 * o2 ])"
+        s << " color(\"grey\") blobs(#{ps.to_scad}, o2 * 2, \"hex2\");\n"
       end
       s << "}\n"
     end

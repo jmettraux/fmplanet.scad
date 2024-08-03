@@ -46,10 +46,10 @@ module hex(key, edge=false) {
 //hex(true);
 //translate([ 2 * r, 0, 0 ]) hex(true);
 
-module int_hex(hh) {
+module int_hex(hh, hr=t - 2 * o2) {
   translate([ 0, 0, -hh ])
     rotate([ 0, 0, 30 ])
-      cylinder(r=t - 2 * o2, h=2 * hh, $fn=6);
+      cylinder(r=hr, h=2 * hh, $fn=6);
 }
 module int_cyl(ch) {
   translate([ 0, 0, -ch ])
@@ -58,7 +58,9 @@ module int_cyl(ch) {
 
 module blobs(xyrs, bh, shape="hex") {
   intersection() {
-    if (shape == "hex") int_hex(bh); else int_cyl(bh);
+    if (shape == "hex") int_hex(bh);
+    else if (shape == "hex2") int_hex(bh, t - 14 * o2);
+    else int_cyl(bh);
     for (i = [ 0 : len(xyrs) - 1 ]) {
       a = xyrs[i];
       b = xyrs[i + 1];
@@ -87,6 +89,12 @@ module plain_hex(key, edge) {
   hex(key, edge);
   translate([ 0, 0, 0.5 * h ]) color("blue") int_hex(2 * o2);
   translate([ 0, 0, 0.5 * h + 2 * o2 ]) int_hex(2 * o2);
+}
+module mountain_hex(key, edge) {
+  hex(key, edge);
+  translate([ 0, 0, 0.5 * h ])
+    rotate([ 0, 0, 30 ]) color("grey")
+      cylinder(r1=t - 2 * o2, r2=t - 14 * o2, h=0.5 * h, $fn=6);
 }
 
 dx = r * 2;
