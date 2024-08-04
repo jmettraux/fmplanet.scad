@@ -43,9 +43,6 @@ module hex(key, edge=false) {
   //#translate([ 0, 0, h * 2 ]) linear_extrude(0.4) text(key, size=8);
 }
 
-//hex(true);
-//translate([ 2 * r, 0, 0 ]) hex(true);
-
 module int_hex(hh, hr=t - 2 * o2) {
   translate([ 0, 0, -hh ])
     rotate([ 0, 0, 30 ])
@@ -97,8 +94,8 @@ module mountain_hex(key, edge) {
       cylinder(r1=t - 2 * o2, r2=t - 14 * o2, h=0.5 * h, $fn=6);
 }
 
-dx = r * 2;
-dy = 1.5 * t + o2;
+dx = 2.0 * r + 0.5 * o2;
+dy = 1.5 * t + 0.5 * o2;
 dx2 = dx / 2;
 
 //        a0  b0  c0  d0
