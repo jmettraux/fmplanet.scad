@@ -15,17 +15,87 @@ fn = ARGV.find { |a| a.match(/^[^-].+\.gcode$/) }
 
 fail "no .gcode filename provided" unless fn
 
-File.readlines(fn).each do |line|
+after_layer_change = false
 
+LAYER_CHANGES = {
+  4.4 => :magnets,
+  5.2 => :sea,
+  5.8 => :plain,
+  6.0 => :hill,
+  6.4 => :mountain,
+  6.6 => :top }
+
+COLORS = {
+  sea: '#0000FF',
+  plain: '#D2B48C',
+  hill: '#A89070',
+  mountain: '#707070',
+  top: '#F5F5DC' }
+
+lines = File.readlines(fn)
+
+loop do
+
+  line = lines.shift; break unless line
   line = line.rstrip
-  if (
-    line == '' ||
-    line.match(/^\s*;/)
-  ) then
+
+  if line == ';AFTER_LAYER_CHANGE'
+
     puts line
+
+    alt_line = lines.shift
+    puts alt_line
+    alt = alt_line[1..-1].to_f
+
+    change = LAYER_CHANGES[alt]
+    color = COLORS[change]
+
+    if change == :magnets
+      puts ';PAUSE_PRINT'
+      puts 'M117 place fmplanet magnets...'
+      puts 'M601'
+      puts lines.shift
+      ## M73 C34
+      ## M73 D38
+        # `M73 C34`: sets remaining time for the current layer to 34'
+        # `M73 D38`: sets the total remaining time for the print to 38'
+      # continue...
+    elsif color
+      puts lines.shift
+      puts lines.shift
+      puts ";COLOR_CHANGE,T0,#{color}"
+      puts 'M600'
+      l = lines.shift
+      unless l.match(/^G1 E\.\d+ F1500$/)
+        puts ";;; #{l}"
+        exit 1
+      end
+      puts 'G1 E0.3 F1500 ; prime after color change'
+    end
   else
+    puts line
   end
 end
+
+#######################
+
+#  ;AFTER_LAYER_CHANGE
+#  ;5.4
+#  G1 X103.872 Y152.053
+#  G1 Z5.4 F720
+## G1 E.7 F1500
+#  ;TYPE:Perimeter
+#  ;WIDTH:0.449999
+
+#  ;AFTER_LAYER_CHANGE
+#  ;5.4
+#  G1 X103.872 Y152.053
+#  G1 Z5.4 F720
+## ;COLOR_CHANGE,T0,#5DB022
+## M600
+## G1 E0.3 F1500 ; prime after color change
+#  ;TYPE:Perimeter
+#  ;WIDTH:0.449999
 
 #######################
 
@@ -51,24 +121,6 @@ end
 #  ;WIDTH:0.449999
 
 #######################
-
-#  ;AFTER_LAYER_CHANGE
-#  ;5.4
-#  G1 X103.872 Y152.053
-#  G1 Z5.4 F720
-## G1 E.7 F1500
-#  ;TYPE:Perimeter
-#  ;WIDTH:0.449999
-
-#  ;AFTER_LAYER_CHANGE
-#  ;5.4
-#  G1 X103.872 Y152.053
-#  G1 Z5.4 F720
-## ;COLOR_CHANGE,T0,#5DB022
-## M600
-## G1 E0.3 F1500 ; prime after color change
-#  ;TYPE:Perimeter
-#  ;WIDTH:0.449999
 
 # G1     This is the command for a linear move.
 # E0.3   This is specifying the amount to extrude. It's instructing the
