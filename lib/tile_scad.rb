@@ -204,34 +204,3 @@ class Tile
   end
 end
 
-
-if $0 == __FILE__
-
-  t = Tile.new
-
-  #t.fill(
-  #  :snakes,
-  #  f4: :plain, d6: :plain,
-  #  sea: [ :sea, :sea, :reef ],
-  #  reef: [ :reef, :reef, :sea, :sea, :swamp ],
-  #  swamp: [ :swamp, :swamp, :plain, :mountain ],
-  #  plain: [ :plain, :plain, :plain, :swamp, :mountain ],
-  #  mountain: [ :mountain, :mountain, :mountain, :plain, :plain ],
-  #  default: [ :reef, :swamp ])
-  #t.fill(:all, type: [ :plain, :plain, :plain, :plain, :plain, :swamp ])
-  #t.fill(:all, type: :sea)
-  t.parse(%{
-       - o - -
-      - - o - -
-     - - - o o o
-    : - - - o - o
-     : : - - o -
-      _ : - - o
-       : - - -
-    })
-
-  puts t.to_s
-
-  File.open('out.scad', 'wb') { |f| f.write(t.to_scad) }
-end
-
