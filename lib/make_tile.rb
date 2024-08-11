@@ -26,12 +26,21 @@ t = Tile.new
 #  default: [ :reef, :swamp ])
 #t.fill(:all, type: [ :plain, :plain, :plain, :plain, :plain, :swamp ])
 #t.fill(:all, type: :sea)
+#t.parse(%{
+#     - o - -
+#    - - o - -
+#   - - - o o o
+#  : - - - o - o
+#   : : - - o -
+#    _ : - - o
+#     : - - -
+#  })
 t.parse(%{
      - o - -
-    - - o - -
-   - - - o o o
-  : - - - o - o
-   : : - - o -
+    ^ - o - -
+   - ^ - o o o
+  : - ^ ^ o - o
+   : : - - ^ o
     _ : - - o
      : - - -
   })

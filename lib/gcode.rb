@@ -23,7 +23,7 @@ LAYER_CHANGES = {
   5.8 => :plain,
   6.0 => :hill,
   6.4 => :mountain,
-  6.6 => :top }
+  7.6 => :top }
 
 COLORS = {
   sea: '#0000FF',
@@ -61,21 +61,32 @@ loop do
         # `M73 D38`: sets the total remaining time for the print to 38'
       # continue...
     elsif color
-      puts lines.shift
-      puts lines.shift
+      loop do
+        l = lines.shift
+        if l.match(/^G1 E\.\d+ F\d+$/)
+          puts 'G1 E0.3 F1500 ; prime after color change'
+          break
+        end
+        puts l
+      end
       puts ";COLOR_CHANGE,T0,#{color}"
       puts 'M600'
-      l = lines.shift
-      unless l.match(/^G1 E\.\d+ F1500$/)
-        puts ";;; #{l}"
-        exit 1
-      end
-      puts 'G1 E0.3 F1500 ; prime after color change'
     end
   else
     puts line
   end
 end
+
+puts "\n;\n; /fpmplanet.scad"
+
+### ;AFTER_LAYER_CHANGE
+### ;5.2
+### ; printing object tile1.stl id:0 copy 0
+### G1 Z5.4
+### G1 X83.772 Y127.629 F12000
+### G1 Z5.2 F720
+### G1 E.8 F1500
+### ;TYPE:Perimeter
 
 #######################
 
