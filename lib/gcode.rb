@@ -18,9 +18,9 @@ fail "no .gcode filename provided" unless fn
 after_layer_change = false
 
 LAYER_CHANGES = {
-  4.4 => :magnets,
+  4.2 => :magnets,
   5.2 => :sea,
-  5.8 => :plain,
+  5.6 => :plain,
   6.0 => :hill,
   6.4 => :mountain,
   7.6 => :top }
@@ -30,7 +30,10 @@ COLORS = {
   plain: '#D2B48C',
   hill: '#A89070',
   mountain: '#707070',
-  top: '#F5F5DC' }
+  #top: '#F5F5DC',
+  top: '#C0C0C0',
+  #top: '#282828',
+    }
 
 lines = File.readlines(fn)
 
