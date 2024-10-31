@@ -6,7 +6,7 @@
 .vimspec
 .vimmarks
 
-.ruby-version
+#.ruby-version
 
 .todo.md
 
